@@ -2,7 +2,15 @@ const request = require('supertest');
 const nock = require('nock');
 const express = require('express');
 const path = require('path');
+const axios = require('axios');
 const { sampleHtmlWithYale } = require('./test-utils');
+
+// Create axios instance without proxy for testing
+const testAxios = axios.create({
+  proxy: false,
+  httpAgent: false,
+  httpsAgent: false
+});
 
 // Import app but don't let it listen on a port (we'll use supertest for that)
 // Create a test app with the same route handlers
@@ -21,7 +29,7 @@ testApp.post('/fetch', async (req, res) => {
 
     // For test purposes, we're using the mocked response from nock
     // The actual HTTP request is intercepted by nock
-    const response = await require('axios').get(url);
+    const response = await testAxios.get(url);
     const html = response.data;
     
     // Use cheerio to parse HTML and selectively replace text content, not URLs
@@ -33,14 +41,14 @@ testApp.post('/fetch', async (req, res) => {
     }).each(function() {
       // Replace text content but not in URLs or attributes
       const text = $(this).text();
-      const newText = text.replace(/Yale/g, 'Fale').replace(/yale/g, 'fale');
+      const newText = text.replace(/Yale/g, 'Fale').replace(/yale/g, 'fale').replace(/YALE/g, 'FALE');
       if (text !== newText) {
         $(this).replaceWith(newText);
       }
     });
-    
+
     // Process title separately
-    const title = $('title').text().replace(/Yale/g, 'Fale').replace(/yale/g, 'fale');
+    const title = $('title').text().replace(/Yale/g, 'Fale').replace(/yale/g, 'fale').replace(/YALE/g, 'FALE');
     $('title').text(title);
     
     return res.json({ 
