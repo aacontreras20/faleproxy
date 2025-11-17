@@ -11,6 +11,83 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// API endpoint for meta search
+app.post('/search', async (req, res) => {
+  try {
+    const { query } = req.body;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+
+    // Simulate meta search across multiple sources with ranking
+    // In a real implementation, this would query multiple search engines/APIs
+    const results = await performMetaSearch(query);
+
+    return res.json({
+      success: true,
+      query: query,
+      results: results,
+      count: results.length
+    });
+  } catch (error) {
+    console.error('Error performing search:', error.message);
+    return res.status(500).json({
+      error: `Search failed: ${error.message}`
+    });
+  }
+});
+
+// Mock meta search function - simulates searching multiple sources
+async function performMetaSearch(query) {
+  // In a real implementation, this would:
+  // 1. Query multiple search engines (Google, Bing, DuckDuckGo, etc.)
+  // 2. Aggregate and deduplicate results
+  // 3. Rank results using a scoring algorithm
+
+  // For POC, we'll simulate with mock data based on query
+  const mockResults = [
+    {
+      title: `Understanding ${query} - Academic Resource`,
+      description: `Comprehensive guide to ${query} covering fundamental concepts and advanced topics. Learn from experts in the field.`,
+      url: `https://www.example.edu/topics/${query.toLowerCase().replace(/\s+/g, '-')}`,
+      source: 'Academic Database',
+      score: 0.95
+    },
+    {
+      title: `${query} - Wikipedia`,
+      description: `Wikipedia article providing an overview of ${query}, including history, key concepts, and references.`,
+      url: `https://en.wikipedia.org/wiki/${query.replace(/\s+/g, '_')}`,
+      source: 'Wikipedia',
+      score: 0.92
+    },
+    {
+      title: `Latest News About ${query}`,
+      description: `Recent news articles and updates related to ${query}. Stay informed with the latest developments.`,
+      url: `https://news.example.com/topic/${query.toLowerCase().replace(/\s+/g, '-')}`,
+      source: 'News Aggregator',
+      score: 0.88
+    },
+    {
+      title: `${query}: Best Practices and Examples`,
+      description: `Practical guide with real-world examples and best practices for ${query}. Includes tutorials and case studies.`,
+      url: `https://tutorials.example.com/${query.toLowerCase().replace(/\s+/g, '-')}`,
+      source: 'Tutorial Site',
+      score: 0.85
+    },
+    {
+      title: `Forum Discussion: ${query}`,
+      description: `Community discussions and Q&A about ${query}. Get insights from practitioners and enthusiasts.`,
+      url: `https://forum.example.com/discuss/${query.toLowerCase().replace(/\s+/g, '-')}`,
+      source: 'Community Forum',
+      score: 0.78
+    }
+  ];
+
+  // Sort by relevance score (descending)
+  return mockResults.sort((a, b) => b.score - a.score);
+}
+
 // API endpoint to fetch and modify content
 app.post('/fetch', async (req, res) => {
   try {

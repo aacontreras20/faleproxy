@@ -10,12 +10,28 @@
     <header>
         <div class="container">
             <h1>Faleproxy</h1>
-            <form id="url-form">
-                <div class="form-group">
-                    <input type="url" id="url-input" placeholder="Enter URL (e.g., https://www.yale.edu)" required>
-                    <button type="submit">Fetch & Replace</button>
-                </div>
-            </form>
+
+            <!-- Meta Search Bar -->
+            <div class="search-section">
+                <h2>Meta Search</h2>
+                <form id="search-form">
+                    <div class="form-group">
+                        <input type="text" id="search-input" placeholder="Ask a question or enter search query..." required>
+                        <button type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- URL Proxy (Original Feature) -->
+            <div class="url-section">
+                <h2>URL Proxy</h2>
+                <form id="url-form">
+                    <div class="form-group">
+                        <input type="url" id="url-input" placeholder="Enter URL (e.g., https://www.yale.edu)" required>
+                        <button type="submit">Fetch & Replace</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </header>
 
@@ -27,6 +43,16 @@
 
         <div id="error-message" class="hidden"></div>
 
+        <!-- Search Results Container -->
+        <div id="search-results-container" class="hidden">
+            <div class="search-results-header">
+                <h2>Search Results for: <span id="search-query"></span></h2>
+                <p class="results-count"><span id="results-count"></span> results found</p>
+            </div>
+            <div id="search-results-list"></div>
+        </div>
+
+        <!-- URL Proxy Results Container -->
         <div id="result-container" class="hidden">
             <div id="info-bar">
                 <p>Original URL: <a id="original-url" target="_blank" rel="noopener noreferrer"></a></p>
